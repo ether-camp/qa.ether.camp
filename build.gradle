@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+    }
+}
+
+plugins {
+    id 'application'
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+
+mainClassName = 'com.ethercamp.qa.ui.Main'
+applicationDefaultJvmArgs = ["-server", "-XX:-OmitStackTraceInFastThrow"]
+
+repositories {
+
+    mavenLocal()
+    mavenCentral()
+
+    maven {
+        url "http://dl.bintray.com/ethereum/maven"
+    }
+    maven {
+        url "https://oss.jfrog.org/libs-snapshot"
+    }
+}
+
+dependencies {
+    compile "commons-codec:commons-codec:1.10"
+    compile "org.apache.commons:commons-lang3:3.3.2"
+    compile "org.apache.commons:commons-collections4:4.1"
+    compile "commons-io:commons-io:2.5"
+    compile "com.google.guava:guava:18.0"
+
+    compile "com.jcraft:jsch:0.1.53"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir './src'
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
