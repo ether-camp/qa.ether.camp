@@ -26,7 +26,7 @@ public class PeerEtherCampScenario extends ProjectTestScenario {
             "blockchain.config.name = \"morden\"\n";
 
     String appProperties;
-    String config;
+    String config = "";
     int modifier;
     boolean morden;
 
@@ -37,11 +37,17 @@ public class PeerEtherCampScenario extends ProjectTestScenario {
     }
 
     @Override
+    public CommonTestScenario setConfig(String config) {
+        this.config = config;
+        return this;
+    }
+
+    @Override
     public void setupImpl() throws Exception {
-        config = morden ? mordenConfTempl : "";
+        config += "\n" + (morden ? mordenConfTempl : "");
         config += "peer.listen.port=" + getEnv().getPort() + "\n";
         config += getEnv().getDbDir() != null ? ("database.dir=" + getEnv().getDbDir() + "\n") : "";
-        setConfig(config);
+        super.setConfig(config);
 
         super.setupImpl();
 

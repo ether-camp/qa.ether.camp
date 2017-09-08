@@ -25,16 +25,7 @@ public class Main extends JPanel {
     static SshConnector sshConnector = new SshConnector(new File("D:\\cygwin\\home\\Admin\\.ssh\\id_dsa"));
 
 
-    SshServer nashat1 = new SshServer(sshConnector, "nashat-1.cloudapp.net", "azureuser");
-    SshServer nashat2 = new SshServer(sshConnector, "nashat-2.cloudapp.net", "azureuser");
-    SshServer nashat3 = new SshServer(sshConnector, "nashat-3.cloudapp.net", "azureuser");
-    SshServer nashat4 = new SshServer(sshConnector, "nashat-4.cloudapp.net", "azureuser");
-    SshServer nashat5 = new SshServer(sshConnector, "nashat-5.cloudapp.net", "azureuser");
-    SshServer nashat6 = new SshServer(sshConnector, "nashat-6.cloudapp.net", "azureuser");
-    SshServer nashat_centos1 = new SshServer(sshConnector, "nashat-centos-1.cloudapp.net", "azureuser");
-    SshServer san_peer_1 = new SshServer(sshConnector, "san-peer-1.cloudapp.net", "azureuser");
-    SshServer san_peer_2 = new SshServer(sshConnector, "san-peer-2.cloudapp.net", "azureuser");
-
+    SshServer nashat1 = new SshServer(sshConnector, "13.93.89.39", "ubuntu");
 
     List<TestScenario> scenarios = createScenarios();
     Monitor monitor = new Monitor() {
@@ -234,215 +225,242 @@ public class Main extends JPanel {
     List<TestScenario> createScenarios() {
         List<TestScenario> ret = new ArrayList<>();
 
-        String branch = null;
+        String branch = "develop";
 
         ret.add(new CommonTestScenario()
                 .setBranch(branch)
-                .setJvmArgs("-Xmx3000M")
-                .setDescription("Core long run -Xmx1500M", "")
+                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+                        "sync.fast.enabled = true\n")
+                .setJvmArgs("-Xmx1000M")
+                .setDescription("Core long fast run -Xmx1000M", "")
                 .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/1").setPort(30301)));
-        ret.add(new ProjectTestScenario("https://github.com/ether-camp/peer.ether.camp")
-                .setGradleTarget("bootRun")
-                .setDescription("peer.ether.camp long run", "")
-                .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/2").setPort(30302)));
+//        ret.add(new ProjectTestScenario("https://github.com/ether-camp/peer.ether.camp")
+//                .setGradleTarget("bootRun")
+//                .setJvmArgs("-Xmx3000M")
+//                .setBranch(branch)
+//                .setDescription("peer.ether.camp long run", "")
+//                .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/2").setPort(30302)));
         ret.add(new CommonTestScenario() {
                     protected String getGradleTarget() {
                         return "run -PmainClass=org.ethereum.samples.BasicSample";
                     }
                 }
                 .setBranch(branch)
-                .setDescription("Core long run BasicSample", "")
+                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+                        "sync.fast.enabled = true\n")
+                .setDescription("Core long fast BasicSample", "")
                 .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/3").setPort(30303)));
-        ret.add(new CommonTestScenario() {
-                    protected String getGradleTarget() {
-                        return "run -PmainClass=org.ethereum.samples.PrivateMinerSample";
-                    }
-                }
-                .setBranch(branch)
-                .setDescription("Core long run PrivateMinerSample", "")
-                .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/4").setPort(30304)));
+//        ret.add(new CommonTestScenario() {
+//                    protected String getGradleTarget() {
+//                        return "run -PmainClass=org.ethereum.samples.PrivateMinerSample";
+//                    }
+//                }
+//                .setBranch(branch)
+//                .setDescription("Core long run PrivateMinerSample", "")
+//                .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/4").setPort(30304)));
 //        ret.add(new StorageDictDependent("https://nashatyrev:kissme1_@github.com/etherj/vmtrace.ether.camp")
 //                .setDescription("vmtrace long run", "")
 //                .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/3").setPort(30303)));
-        ret.add(new ProjectTestScenario("https://github.com/ether-camp/ethereumj.starter")
-                .setGradleTarget("bootRun")
-                .setDescription("ethereumj.starter long run", "")
-                .setEnv(new TestEnv(nashat3, "/mnt/ethereumj/1").setPort(30301)));
+//        ret.add(new ProjectTestScenario("https://github.com/ether-camp/ethereumj.starter")
+//                .setGradleTarget("bootRun")
+//                .setBranch("master")
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("ethereumj.starter fast long run", "")
+//                .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/5").setPort(30305)));
 //        ret.add(new StorageDictDependent("https://nashatyrev:kissme1_@github.com/etherj/state.ether.camp")
 //                .setDescription("state long run", "")
 //                .setEnv(new TestEnv(nashat3, "/mnt/ethereumj/2").setPort(30302)));
         ret.add(new CommonTestScenario()
-//                .setBranch("feature/contract-storage-one-db")
-//                .setBranch("feature/contract-prune")
-//                .setBranch("feature/refactor-init-sequence")
-                .setJvmArgs("-Xmx2500M")
-                .setDescription("Core long", "")
-                .setEnv(new TestEnv(nashat4, "/mnt/ethereumj/1").setPort(30301)));
+                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+                        "sync.fast.enabled = false\n")
+                .setBranch(branch)
+                .setJvmArgs("-Xmx3000M")
+                .setDescription("Core long nonfast", "")
+                .setEnv(new TestEnv(nashat1, "/mnt/ethereumj/6").setPort(30306)));
+
 //        ret.add(new CommonTestScenario()
 //                .setBranch(branch)
 //                .setJvmArgs("-Xmx512M")
 //                .setConfig("cache.flush.memory = 0.8\n")
 //                .setDescription("Core long run with Xmx512M", "")
 //                .setEnv(new TestEnv(nashat4, "/mnt/ethereumj/2").setPort(30302)));
-        ret.add(new CommonTestScenario() {
-                    protected String getGradleTarget() {
-                        return "runMorden";
-                    }
-                }
-                .setBranch(branch)
-                .setDescription("Core long run morden", "")
-                .setEnv(new TestEnv(nashat4, "/mnt/ethereumj/3").setPort(30303)));
-        ret.add(new CommonTestScenario() {
-                    protected String getGradleTarget() {
-                        return "runTest";
-                    }
-                }
-                .setBranch(branch)
-                .setDescription("Core long run testnet", "")
-                .setEnv(new TestEnv(nashat4, "/mnt/ethereumj/4").setPort(30304)));
+
+//        ret.add(new CommonTestScenario() {
+//                    protected String getGradleTarget() {
+//                        return "runRopsten";
+//                    }
+//                }
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = false\n")
+//                .setBranch(branch)
+////                .setJvmArgs("-Xmx1000M")
+//                .setDescription("Core long nonfast run ropsten", "")
+//                .setEnv(new TestEnv(nashat4, "/mnt/ethereumj/3").setPort(30303)));
+//        ret.add(new CommonTestScenario() {
+//                    protected String getGradleTarget() {
+//                        return "runTest";
+//                    }
+//                }
+//                .setBranch(branch)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("Core long fast run testnet", "")
+//                .setEnv(new TestEnv(nashat4, "/mnt/ethereumj/4").setPort(30304)));
+//        ret.add(new CommonTestScenario() {
+//                    protected String getGradleTarget() {
+//                        return "runTest";
+//                    }
+//                }
+//                .setBranch(branch)
+//                .setDescription("Core long nonfast run testnet", "")
+//                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/1").setPort(30301)));
 //        ret.add(new CommonTestScenario()
 //                .setBranch(branch)
-//                .setJvmArgs("-Xmx256M")
-//                .setConfig("cache.flush.memory = 0.8\n")
-//                .setDescription("Core long run with Xmx256M", "")
-//                .setEnv(new TestEnv(nashat4, "/mnt/ethereumj/5").setPort(30305)));
-        ret.add(new CommonTestScenario() {
-                    protected String getGradleTarget() {
-                        return "runTest";
-                    }
-                }
-                .setBranch(branch)
-                .setDescription("Core long run testnet", "")
-                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/1").setPort(30301)));
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setDescription("Core long run", "")
-                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/2").setPort(30302)));
-        ret.add(new CommonTestScenario()
-                .setBranch("feature/trie-prune")
-                .setJvmArgs("-Xmx1G")
-                .setDescription("Core long run with Xmx1G", "")
-                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/3").setPort(30303)));
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setConfig("peer.privateKey = 0bdb5315963d45dfc61957a67c5ddfdde71326b0e9a768aa7546b25ee470af4b \n" +
-                        "peer.discovery.enabled = false \n" +
-                        "peer.active = [ \n" +
-                        "        { url = \"enode://69bfa214a36e0e4d9fe3437e2cd5450143133d46bb28cfdfe65b9215dafee080c7ac9b275638945d77806f2bfaebedd35b922b70fe1baab0e91165cfabbc5299@frontier-2.ether.camp:30303\" }, \n" +
-                        "        { url = \"enode://fec03476503431ebb1ea610c90330b6925f3b4ce04e1106b9c6622b8cc1a59f2a24db6c80f45e6f1d29d430d72a63292cfc75cf4b75d795edaefa2aa75da4e63@frontier-3.ether.camp:30303\" }, \n" +
-                        "        { url = \"enode://77e6a5959a5e0529031f1783709a5d7965c579588c702bf8811fe2ac5bca6511833eae83cab0ff08c9681e4111b75a9381932dd20852eaf863a5e5bb39bacd31@frontier-4.ether.camp:30303\" }  \n" +
-                        "] \n")
-                .setDescription("Core long run with 3 active peers", "")
-                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/4").setPort(30304)));
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setConfig("peer.privateKey = 366fcfba0bad1413e9a328e5067da2302e90fcfe58b6912beacd91516ac903ca \n" +
-                        "peer.discovery.enabled = false \n" +
-                        "peer.active = [ \n" +
-                        "        { url = \"enode://69bfa214a36e0e4d9fe3437e2cd5450143133d46bb28cfdfe65b9215dafee080c7ac9b275638945d77806f2bfaebedd35b922b70fe1baab0e91165cfabbc5299@frontier-2.ether.camp:30303\" } \n" +
-                        "] \n")
-                .setDescription("Core long run with 1 active peers", "")
-                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/1").setPort(30301)));
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setConfig("peer.privateKey = 366fcfba0bad1413e9a328e5067da2302e90fcfe58b6912beacd91516ac903ca \n" +
-                        "peer.discovery.enabled = false \n" +
-                        "peer.active = [ \n" +
-                        "        { url = \"enode://fec03476503431ebb1ea610c90330b6925f3b4ce04e1106b9c6622b8cc1a59f2a24db6c80f45e6f1d29d430d72a63292cfc75cf4b75d795edaefa2aa75da4e63@frontier-3.ether.camp:30303\" } \n" +
-                        "] \n")
-                .setDescription("Core long run with 1 active peers", "")
-                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/2").setPort(30302)));
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setConfig("peer.privateKey = 366fcfba0bad1413e9a328e5067da2302e90fcfe58b6912beacd91516ac903ca \n" +
-                        "peer.discovery.enabled = false \n" +
-                        "peer.active = [ \n" +
-                        "        { url = \"enode://77e6a5959a5e0529031f1783709a5d7965c579588c702bf8811fe2ac5bca6511833eae83cab0ff08c9681e4111b75a9381932dd20852eaf863a5e5bb39bacd31@frontier-4.ether.camp:30303\" } \n" +
-                        "] \n")
-                .setDescription("Core long run with 1 active peers", "")
-                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/3").setPort(30303)));
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setDescription("Core long run", "")
-                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/4").setPort(30304)));
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setDescription("Core long run", "")
-                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/5").setPort(30305)));
-        ret.add(new CommonTestScenario() {
-                    protected String getGradleTarget() {
-                        return "run -PmainClass=org.ethereum.samples.BasicSample";
-                    }
-                }
-                .setBranch(branch)
-                .setDescription("Core long run BasicSample", "")
-                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/6").setPort(30306)));
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = false\n")
+//                .setDescription("Core long nonfast run", "")
+//                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/2").setPort(30302)));
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n")
+//                .setJvmArgs("-Xmx1G")
+//                .setDescription("Core non-fast long run with Xmx1G", "")
+//                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/3").setPort(30303)));
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("peer.privateKey = 0bdb5315963d45dfc61957a67c5ddfdde71326b0e9a768aa7546b25ee470af4b \n" +
+//                        "database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n" +
+//                        "peer.discovery.enabled = false \n" +
+//                        "peer.active = [ \n" +
+//                        "        { url = \"enode://69bfa214a36e0e4d9fe3437e2cd5450143133d46bb28cfdfe65b9215dafee080c7ac9b275638945d77806f2bfaebedd35b922b70fe1baab0e91165cfabbc5299@frontier-2.ether.camp:30303\" }, \n" +
+//                        "        { url = \"enode://73bb09f38726f3ab55b5ef61f97bebfd12bdbf2be038665e22461591e99c1dcd90d4a07173e4fb32de0ea2108e87edda273fd887a1f4b0bab24a4738295e7c40@frontier-3.ether.camp:30303\" }, \n" +
+//                        "        { url = \"enode://f8fb3f5c253b8685da8b887bb5de4e39bcca2a49d0bfc1a7174b5608a2ebda8b7b2759ad7621a489699bc41e89147fdde4e4e5668b95bb7d8dcd018e7019f7aa@frontier-4.ether.camp:30303\" }  \n" +
+//                        "] \n")
+//                .setDescription("Core long run with 3 active peers", "")
+//                .setEnv(new TestEnv(nashat5, "/mnt/ethereumj/4").setPort(30304)));
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("peer.privateKey = 366fcfba0bad1413e9a328e5067da2302e90fcfe58b6912beacd91516ac903ca \n" +
+//                        "peer.discovery.enabled = false \n" +
+//                        "peer.active = [ \n" +
+//                        "        { url = \"enode://69bfa214a36e0e4d9fe3437e2cd5450143133d46bb28cfdfe65b9215dafee080c7ac9b275638945d77806f2bfaebedd35b922b70fe1baab0e91165cfabbc5299@frontier-2.ether.camp:30303\" } \n" +
+//                        "] \n")
+//                .setDescription("Core long run with 1 active peers", "")
+//                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/1").setPort(30301)));
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("peer.privateKey = 366fcfba0bad1413e9a328e5067da2302e90fcfe58b6912beacd91516ac903ca \n" +
+//                        "peer.discovery.enabled = false \n" +
+//                        "sync.fast.enabled = true \n" +
+//                        "peer.active = [ \n" +
+//                        "        { url = \"enode://73bb09f38726f3ab55b5ef61f97bebfd12bdbf2be038665e22461591e99c1dcd90d4a07173e4fb32de0ea2108e87edda273fd887a1f4b0bab24a4738295e7c40@frontier-3.ether.camp:30303\" } \n" +
+//                        "] \n")
+//                .setDescription("Core fastsync long run with 1 active peers", "")
+//                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/2").setPort(30302)));
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("peer.privateKey = 366fcfba0bad1413e9a328e5067da2302e90fcfe58b6912beacd91516ac903ca \n" +
+//                        "peer.discovery.enabled = false \n" +
+//                        "peer.active = [ \n" +
+//                        "        { url = \"enode://f8fb3f5c253b8685da8b887bb5de4e39bcca2a49d0bfc1a7174b5608a2ebda8b7b2759ad7621a489699bc41e89147fdde4e4e5668b95bb7d8dcd018e7019f7aa@frontier-4.ether.camp:30303\" } \n" +
+//                        "] \n")
+//                .setDescription("Core long run with 1 active peers", "")
+//                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/3").setPort(30303)));
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                            "sync.fast.enabled = false\n")
+//                .setDescription("Core long nonfast run", "")
+//                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/4").setPort(30304)));
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                            "sync.fast.enabled = false\n")
+//                .setDescription("Core long nonfast run ", "")
+//                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/5").setPort(30305)));
+//        ret.add(new CommonTestScenario() {
+//                    protected String getGradleTarget() {
+//                        return "run -PmainClass=org.ethereum.samples.BasicSample";
+//                    }
+//                }
+//                .setBranch(branch)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n")
+//                .setDescription("Core long nonfast run BasicSample", "")
+//                .setEnv(new TestEnv(nashat6, "/mnt/ethereumj/6").setPort(30306)));
+//
+//        ret.add(new CommonTestScenario()
+//                .setBranch(branch)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n")
+//                .setDescription("Core long nonfast run", "")
+//                .setEnv(new TestEnv(nashat_centos1, "/mnt/resource/ethereumj/1").setPort(30301)));
+//
+//
+//        ret.add(new PeerEtherCampScenario(5, false)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("netstat run", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.1")
+//                        .setPort(30303)));
+//        ret.add(new PeerEtherCampScenario(7, false)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("netstat run", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.2")
+//                        .setPort(30305)));
+//        ret.add(new PeerEtherCampScenario(9, false)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("netstat run", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.3")
+//                        .setPort(30307)));
+//        ret.add(new PeerEtherCampScenario(11, false)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("netstat run", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.4")
+//                        .setPort(30309)));
+//        ret.add(new PeerEtherCampScenario(13, false)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("netstat run", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.5")
+//                        .setPort(30311)));
+//        ret.add(new PeerEtherCampScenario(15, false)
+//                .setConfig("database.incompatibleDatabaseBehavior = RESET\n" +
+//                        "sync.fast.enabled = true\n")
+//                .setDescription("netstat run", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.6")
+//                        .setPort(30313)));
 
-        ret.add(new CommonTestScenario()
-                .setBranch(branch)
-                .setDescription("Core long run", "")
-                .setEnv(new TestEnv(nashat_centos1, "/mnt/resource/ethereumj/1").setPort(30301)));
 
 
-        ret.add(new PeerEtherCampScenario(5, false)
-                .setDescription("netstat run", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.1")
-                        .setPort(30303)));
-        ret.add(new PeerEtherCampScenario(7, false)
-                .setDescription("netstat run", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.2")
-                        .setPort(30305)));
-        ret.add(new PeerEtherCampScenario(9, false)
-                .setDescription("netstat run", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.3")
-                        .setPort(30307)));
-        ret.add(new PeerEtherCampScenario(11, false)
-                .setDescription("netstat run", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.4")
-                        .setPort(30309)));
-        ret.add(new PeerEtherCampScenario(13, false)
-                .setDescription("netstat run", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.5")
-                        .setPort(30311)));
-        ret.add(new PeerEtherCampScenario(15, false)
-                .setDescription("netstat run", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/peer.6")
-                        .setPort(30313)));
-        ret.add(new PeerEtherCampScenario(6, true)
-                .setDescription("netstat run morden", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.1")
-                        .setPort(30304)));
-        ret.add(new PeerEtherCampScenario(8, true)
-                .setDescription("netstat run morden", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.2")
-                        .setPort(30306)));
-        ret.add(new PeerEtherCampScenario(10, true)
-                .setDescription("netstat run morden", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.3")
-                        .setPort(30308)));
-        ret.add(new PeerEtherCampScenario(12, true)
-                .setDescription("netstat run morden", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.4")
-                        .setPort(30310)));
-        ret.add(new PeerEtherCampScenario(14, true)
-                .setDescription("netstat run morden", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.5")
-                        .setPort(30312)));
-        ret.add(new PeerEtherCampScenario(16, true)
-                .setDescription("netstat run morden", "")
-                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.6")
-                        .setPort(30314)));
+//        ret.add(new PeerEtherCampScenario(6, true)
+//                .setDescription("netstat run morden", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.1")
+//                        .setPort(30304)));
+//        ret.add(new PeerEtherCampScenario(8, true)
+//                .setDescription("netstat run morden", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.2")
+//                        .setPort(30306)));
+//        ret.add(new PeerEtherCampScenario(10, true)
+//                .setDescription("netstat run morden", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.3")
+//                        .setPort(30308)));
+//        ret.add(new PeerEtherCampScenario(12, true)
+//                .setDescription("netstat run morden", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.4")
+//                        .setPort(30310)));
+//        ret.add(new PeerEtherCampScenario(14, true)
+//                .setDescription("netstat run morden", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.5")
+//                        .setPort(30312)));
+//        ret.add(new PeerEtherCampScenario(16, true)
+//                .setDescription("netstat run morden", "")
+//                .setEnv(new TestEnv(nashat2, "/mnt/ethereumj/morden.6")
+//                        .setPort(30314)));
 
-        ret.add(new PeerEtherCampScenario(5, true)
-                .setDescription("san-peer-1", "")
-                .setEnv(new TestEnv(san_peer_1, "/home/azureuser/peer.1")
-                        .setPort(30303)
-                        .setDbDir("/mnt/ethereumj/peer.1")));
-        ret.add(new PeerEtherCampScenario(5, true)
-                .setDescription("san-peer-2", "")
-                .setEnv(new TestEnv(san_peer_2, "/home/azureuser/peer.1")
-                        .setPort(30303)
-                        .setDbDir("/mnt/ethereumj/peer.1")));
 //        ret.add(new ProjectTestScenario("https://github.com/ether-camp/peer.ether.camp") {
 //            protected String getRunCommand(String javaArgs) {
 //                return "./run.sh";

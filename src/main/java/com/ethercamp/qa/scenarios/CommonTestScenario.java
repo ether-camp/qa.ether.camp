@@ -200,6 +200,7 @@ public class CommonTestScenario extends TestScenario {
             }
 
             if (s.contains(" ERROR ")) {
+                if (s.length() > 2000) s = s.substring(0, 2000);
                 listener.logErrorFound(this, s);
             } else if (s.contains("importing")) {
                 int idx1 = s.indexOf("block.number: ");
